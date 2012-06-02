@@ -41,11 +41,9 @@ func NewFeatureVector(size int) *FeatureVector {
 }
 
 func (fv *FeatureVector) PushBack(f Node) {
-	l := fv.Len()
-
-	if l > fv.Cap() { // reallocate
+	if fv.ptr >= fv.Cap() { // reallocate
 		// Allocate double what's needed
-		newSlice := make([]Node, l*2)
+		newSlice := make([]Node, fv.ptr*2)
 
 		copy(newSlice, fv.vec)
 		fv.vec = newSlice
