@@ -17,9 +17,17 @@ func HingeLoss(w float64, y int) float64 {
 	return 0.0
 }
 
+// Instance represents instance (x, y) in D where
+// x is a feature vector representation and y is a label: -1 or +1.
+type Instance struct {
+	fv *FeatureVector
+	label int
+}
+
 // APIs
 
 func Learn(train_file string, param Param) {
-	fmt.Println("train_file = ", train_file)
+	// fmt.Println("train_file = ", train_file)
 	fmt.Println(param)
+	ReadTrainingData(train_file)
 }
