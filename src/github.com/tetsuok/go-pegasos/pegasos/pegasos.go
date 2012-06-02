@@ -6,6 +6,7 @@ package pegasos
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 // binary classification
@@ -22,6 +23,16 @@ func HingeLoss(w float64, y int) float64 {
 type Example struct {
 	fv    *FeatureVector
 	label int
+}
+
+func (e Example) Equal(other Example) bool {
+	if e.label != other.label {
+		return false
+	}
+	if !e.fv.Equal(other.fv) {
+		return false
+	}
+	return true
 }
 
 // APIs

@@ -10,13 +10,28 @@ import (
 	"testing"
 )
 
-func TestFeature(t *testing.T) {
+func setupFeatureVector() *FeatureVector {
+	fv := NewFeatureVector(2)
+	fv.PushBack(Node{1, 1.0})
+	fv.PushBack(Node{3, 2.0})
+	return fv
+}
+
+func TestNode(t *testing.T) {
 	f := Node{1, 4.0}
 	if f.id != 1 {
 		t.Errorf("f.id = %d, want %d", f.id, 1)
 	}
 	if !close(f.v, 4.0) {
 		t.Errorf("f.v = %g, want %g", f.v, 4.0)
+	}
+}
+
+func TestNodeEqual(t *testing.T) {
+	n := Node{1, 3.0}
+	n2 := Node{1, 3.0}
+	if !n.Equal(n2) {
+		t.Errorf("n = %v, want %v", n, n2)
 	}
 }
 
@@ -42,6 +57,15 @@ func TestFeatureIndex(t *testing.T) {
 	fv.PushBack(f)
 	if fi := fv.Index(0); *fi != f {
 		t.Errorf("fi = %s, want %s", fi, f)
+	}
+}
+
+func TestFeatureVectorEqual(t *testing.T) {
+	fv1 := setupFeatureVector()
+	fv2 := setupFeatureVector()
+
+	if !fv1.Equal(fv2) {
+		t.Errorf("%v, want %v", fv1, fv2)
 	}
 }
 

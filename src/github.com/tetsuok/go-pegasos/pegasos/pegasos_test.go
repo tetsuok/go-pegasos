@@ -8,24 +8,6 @@ import (
 	"testing"
 )
 
-func tolerance(a, b, e float64) bool {
-	d := a - b
-	if d < 0 {
-		d = -d
-	}
-
-	if a != 0 {
-		e = e * a
-		if e < 0 {
-			e = -e
-		}
-	}
-	return d < e
-}
-
-// func kindaclose(a, b float64) bool { return tolerance(a, b, 1e-8) }
-func close(a, b float64) bool { return tolerance(a, b, 1e-14) }
-
 type LossTest struct {
 	w   float64
 	y   int
@@ -35,6 +17,21 @@ type LossTest struct {
 var lossTests = []LossTest{
 	{2.0, 1, 0.0},
 	{2.0, -1, 3.0},
+}
+
+func setupExample(label int) *Example {
+	fv := NewFeatureVector(2)
+	fv.PushBack(Node{1, 1.0})
+	fv.PushBack(Node{3, 2.0})
+	return &Example{fv, label}
+}
+
+func TestEqualExample(t *testing.T) {
+	e := setupExample(1)
+	e2 := setupExample(1)
+	if !e.Equal(*e2) {
+		t.Errorf("%v, want %v", e, e2)
+	}
 }
 
 func TestObjective(t *testing.T) {

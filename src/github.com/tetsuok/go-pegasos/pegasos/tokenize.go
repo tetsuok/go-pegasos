@@ -60,24 +60,29 @@ Error:
 	return nil, syntaxError(fnTokenizeNode, s)
 }
 
-func Tokenize(s string) (x Example, err error) {
+func Tokenize(s string) (x Example, maxId int, err error) {
 	fv := NewFeatureVector(3)
 	seq := strings.Split(s, " ")
 	y, err := strconv.Atoi(seq[0])
+	maxId = 0
 
 	if err != nil || (y != -1 && y != 1) {
 		fmt.Fprintf(os.Stderr, "Invalid label = %d\n", y)
-		return Example{}, err
+		return Example{}, maxId, err
 	}
 
 	for _, a := range seq[1:] {
 		node, err := tokenizeNode(a)
 		if err != nil {
-			return Example{}, err
+			return Example{}, maxId, err
 		}
 		fv.PushBack(*node)
+
+		if node.id > maxId {
+			maxId = node.id
+		}
 	}
-	return Example{fv, y}, nil
+	return Example{fv, y}, maxId, nil
 }
 
 // func DebugStringList(l *list.List) string {

@@ -17,10 +17,11 @@ import (
 //
 // implements file reader to read files in libsvm format.
 
-func readLines(r io.Reader) []Example {
+func readLines(r io.Reader) ([]Example, int) {
 	rd := bufio.NewReader(r)
 	lineNum := 1
 	var data []Example
+	maxId := 0
 	for {
 		line, err := rd.ReadString('\n')
 		if err == io.EOF {
@@ -30,19 +31,23 @@ func readLines(r io.Reader) []Example {
 			log.Fatal(err)
 		}
 
-		x, err := Tokenize(strings.TrimRight(line, "\n"))
+		x, id, err := Tokenize(strings.TrimRight(line, "\n"))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Illegal line at %d\n", lineNum)
 			log.Fatal(err)
 		}
 		data = append(data, x)
 
+		if id > maxId {
+			maxId = id
+		}
+
 		lineNum++
 	}
-	return data
+	return data, maxId
 }
 
-func ReadTrainingData(filename string) []Example {
+func ReadTrainingData(filename string) ([]Example, int) {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)

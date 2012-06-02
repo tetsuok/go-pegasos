@@ -14,6 +14,13 @@ type Node struct {
 func (f Node) Id() int        { return f.id }
 func (f Node) Value() float64 { return f.v }
 
+func (f Node) Equal(other Node) bool {
+	if f.id != other.id || !close(f.v, other.v) {
+		return false
+	}
+	return true
+}
+
 type FeatureVector struct {
 	vec []Node
 	ptr int // index of new element to be inserted
@@ -50,6 +57,21 @@ func (fv *FeatureVector) PushBack(f Node) {
 	}
 	fv.vec[fv.ptr] = f
 	fv.ptr++
+}
+
+func (fv *FeatureVector) Equal(other *FeatureVector) bool {
+	if n, n2 := fv.Size(), other.Size(); n != n2 {
+		return false
+	}
+	N := fv.Size()
+	for i := 0; i < N; i++ {
+		n1 := fv.Index(i)
+		n2 := other.Index(i)
+		if !n1.Equal(*n2) {
+			return false
+		}
+	}
+	return true
 }
 
 // Append
