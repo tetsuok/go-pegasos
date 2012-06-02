@@ -36,19 +36,20 @@ If you want to run testing including benchmarks, use `check.sh`
     $ ./check.sh
 
 
-### Usage ###
+Usage
+-----
 
-#### Data format ####
+### Data format ###
 
 go-pegasos accepts the same representation of training data as
 [SVMlight](http://svmlight.joachims.org/) uses. This format has
 potential to handle large sparse feature vectors.
 
-#### Training ####
+### Training ###
 
 Under construction.
 
-#### Testing with trained model ####
+### Testing with trained model ###
 
 Under construction.
 
