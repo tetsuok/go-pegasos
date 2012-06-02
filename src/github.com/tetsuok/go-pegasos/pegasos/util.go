@@ -4,6 +4,10 @@
 
 package pegasos
 
+import (
+	"math/rand"
+	)
+
 func tolerance(a, b, e float64) bool {
 	d := a - b
 	if d < 0 {
@@ -21,3 +25,8 @@ func tolerance(a, b, e float64) bool {
 
 // func kindaclose(a, b float64) bool { return tolerance(a, b, 1e-8) }
 func close(a, b float64) bool { return tolerance(a, b, 1e-14) }
+
+
+func SelectNext(n int) int {
+	return rand.Intn(n)
+}

@@ -36,7 +36,7 @@ func TestEqualExample(t *testing.T) {
 
 func TestObjective(t *testing.T) {
 	for _, test := range lossTests {
-		if f := HingeLoss(test.w, test.y); !close(test.out, f) {
+		if f := hingeLoss(test.w, test.y); !close(test.out, f) {
 			t.Errorf("HingeLoss(2.0, 1) = %g, want %g", f, test.out)
 		}
 	}

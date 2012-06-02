@@ -10,12 +10,24 @@ import "math"
 
 type Weights []float64
 
+func NewWeights(dim int) Weights {
+	return Weights(make([]float64, dim))
+}
+
 func (w *Weights) Get(i int) float64 { return (*w)[i] }
 func (w *Weights) Len() int          { return len(*w) }
 
 func (w *Weights) Scale(f float64) {
 	for i := 0; i < len(*w); i++ {
 		(*w)[i] = (*w)[i] * f
+	}
+}
+
+func (w *Weights) Add(fv *FeatureVector, c float64) {
+	N := fv.Size()
+	for i := 0; i < N; i++ {
+		f := fv.Index(i)
+		(*w)[f.id] += f.v * c
 	}
 }
 
