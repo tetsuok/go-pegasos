@@ -7,9 +7,9 @@
 package pegasos
 
 import (
-	"container/list"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -60,28 +60,35 @@ Error:
 	return nil, syntaxError(fnTokenizeNode, s)
 }
 
-func Tokenize(s string) (l *list.List, err error) {
-	l = list.New()
+func Tokenize(s string) (x Example, err error) {
+	fv := NewFeatureVector(3)
 	seq := strings.Split(s, " ")
-	for _, a := range seq {
-		fe, err := tokenizeNode(a)
-		if err != nil {
-			return nil, err
-		}
-		l.PushBack(fe)
+	y, err := strconv.Atoi(seq[0])
+
+	if err != nil || (y != -1 && y != 1) {
+		fmt.Fprintf(os.Stderr, "Invalid label = %d\n", y)
+		return Example{}, err
 	}
-	return l, nil
+
+	for _, a := range seq[1:] {
+		node, err := tokenizeNode(a)
+		if err != nil {
+			return Example{}, err
+		}
+		fv.PushBack(*node)
+	}
+	return Example{fv, y}, nil
 }
 
-func DebugStringList(l *list.List) string {
-	str := "["
-	for e := l.Front(); e != nil; e = e.Next() {
-		if e != l.Front() {
-			str += " "
-		}
-		if e.Value != nil {
-			str += fmt.Sprint(e.Value)
-		}
-	}
-	return str + "]"
-}
+// func DebugStringList(l *list.List) string {
+// 	str := "["
+// 	for e := l.Front(); e != nil; e = e.Next() {
+// 		if e != l.Front() {
+// 			str += " "
+// 		}
+// 		if e.Value != nil {
+// 			str += fmt.Sprint(e.Value)
+// 		}
+// 	}
+// 	return str + "]"
+// }

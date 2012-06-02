@@ -17,10 +17,10 @@ func HingeLoss(w float64, y int) float64 {
 	return 0.0
 }
 
-// Instance represents instance (x, y) in D where
-// x is a feature vector representation and y is a label: -1 or +1.
-type Instance struct {
-	fv *FeatureVector
+// Example represents each example (x, y) in training data where x is
+// a feature vector representation and y is a label: -1 or +1.
+type Example struct {
+	fv    *FeatureVector
 	label int
 }
 

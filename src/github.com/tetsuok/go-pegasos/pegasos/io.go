@@ -10,15 +10,17 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 // reaeder
 //
 // implements file reader to read files in libsvm format.
 
-func readLines(r io.Reader) {
+func readLines(r io.Reader) []Example {
 	rd := bufio.NewReader(r)
 	lineNum := 1
+	var data []Example
 	for {
 		line, err := rd.ReadString('\n')
 		if err == io.EOF {
@@ -28,16 +30,23 @@ func readLines(r io.Reader) {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("%s", line)
+		x, err := Tokenize(strings.TrimRight(line, "\n"))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Illegal line at %d\n", lineNum)
+			log.Fatal(err)
+		}
+		data = append(data, x)
+
 		lineNum++
 	}
+	return data
 }
 
-func ReadTrainingData(filename string) {
+func ReadTrainingData(filename string) []Example {
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
-	readLines(file)
+	return readLines(file)
 }
