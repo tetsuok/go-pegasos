@@ -64,7 +64,7 @@ func OpenModel(model string) (param Param, w Weights, eta float64) {
 	}
 	defer f.Close()
 
-  param = Param{}
+	param = Param{}
 	w = NewWeights(10)
 	eta = 1.0
 

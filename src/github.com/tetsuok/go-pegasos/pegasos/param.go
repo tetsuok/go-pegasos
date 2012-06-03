@@ -6,8 +6,8 @@ package pegasos
 
 // Parameters
 type Param struct {
-	Lambda float64
-	NumIter int
+	Lambda    float64
+	NumIter   int
 	BlockSize int
 	ModelFile string
 }

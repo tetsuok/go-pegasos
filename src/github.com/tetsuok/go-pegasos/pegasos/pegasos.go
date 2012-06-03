@@ -33,8 +33,8 @@ type Example struct {
 }
 
 type MissedExample struct {
-	id int												// an index of missed example.
-	w  float64										// score to calculate eta_k /k \sum y x
+	id int     // an index of missed example.
+	w  float64 // score to calculate eta_k /k \sum y x
 }
 
 func (e Example) Equal(other Example) bool {
@@ -48,18 +48,18 @@ func (e Example) Equal(other Example) bool {
 }
 
 type Classifier struct {
-	param Param
+	param    Param
 	examples []Example
-	w Weights
-	eta float64
+	w        Weights
+	eta      float64
 }
 
 func NewClassifier(param Param, examples []Example, dim int) *Classifier {
-	return &Classifier{param, examples, NewWeights(dim+1), 0.0}
+	return &Classifier{param, examples, NewWeights(dim + 1), 0.0}
 }
 
 func (c *Classifier) SetEta(t int) {
-	c.eta = 1.0 / (c.param.Lambda * float64(t + 2))
+	c.eta = 1.0 / (c.param.Lambda * float64(t+2))
 }
 
 func (c *Classifier) Eta() float64 { return c.eta }
@@ -132,12 +132,12 @@ func Learn(trainFile string, param Param) {
 			if loss > 0.0 {
 				// TODO: This is too slow; replace Append() described in "Effective Go".
 				missedExamples = append(missedExamples,
-					MissedExample{r, classifier.eta * float64(examples[r].label) / float64(param.BlockSize) })
+					MissedExample{r, classifier.eta * float64(examples[r].label) / float64(param.BlockSize)})
 			}
 		}
 
 		// Subgradient
-		classifier.w.Scale(1.0 - classifier.eta * param.Lambda)
+		classifier.w.Scale(1.0 - classifier.eta*param.Lambda)
 		for _, missed := range missedExamples {
 			classifier.w.Add(examples[missed.id].fv, missed.w)
 		}
