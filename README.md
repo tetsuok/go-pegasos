@@ -1,7 +1,7 @@
 go-pegasos
 ==========
 
-A Go implementation of the Pegasos algorithm [1] for solving Support Vector Machines
+An implementation of the Pegasos algorithm [1] for solving Support Vector Machines in Go.
 
 Build Instructions
 ------------------
