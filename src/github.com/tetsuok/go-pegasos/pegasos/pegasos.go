@@ -89,18 +89,66 @@ func (c *Classifier) CalcObjective(missed []MissedExample) float64 {
 }
 
 // Open model
-func (c *Classifier) Open() {
+func (c *Classifier) Open(model string) {
+	c.param, c.w, c.eta = OpenModel(model)
 }
 
 // Save model to a file
 func (c *Classifier) Save() {
-	SaveModel(c.param, c.w, c.eta)
+	WriteModel(c.param, c.w, c.eta)
 }
 
 // APIs
 
-func Learn(train_file string, param Param) {
-	// fmt.Println("train_file = ", train_file)
-	fmt.Println(param)
-	ReadTrainingData(train_file)
+func Learn(trainFile string, param Param) {
+	rand.Seed(1234)
+	start := time.Now()
+
+	fmt.Printf("Reading %s ... ", trainFile)
+	examples, dim := ReadTrainingData(trainFile)
+
+	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
+
+	classifier := NewClassifier(param, examples, dim)
+
+	numExamples := len(examples)
+	fmt.Println("Dimension =", classifier.w.Len())
+	fmt.Println("# of training data =", numExamples)
+
+	for t := 0; t < param.NumIter; t++ {
+		fmt.Println("Iteration =", t)
+		// eta := 1.0 / (param.Lambda * float64(t + 2))
+		classifier.SetEta(t)
+
+		// TODO: use make and resize properly.
+		var missedExamples []MissedExample
+
+		// Set up A_t
+		for k := 0; k < param.BlockSize; k++ {
+			r := SelectNext(numExamples)
+
+			// Compute A_t^+
+			loss := HingeLoss(classifier.w, examples[r].fv, examples[r].label)
+			if loss > 0.0 {
+				// TODO: This is too slow; replace Append() described in "Effective Go".
+				missedExamples = append(missedExamples,
+					MissedExample{r, classifier.eta * float64(examples[r].label) / float64(param.BlockSize) })
+			}
+		}
+
+		// Subgradient
+		classifier.w.Scale(1.0 - classifier.eta * param.Lambda)
+		for _, missed := range missedExamples {
+			classifier.w.Add(examples[missed.id].fv, missed.w)
+		}
+
+		classifier.Project()
+
+		// Compute objective
+		fmt.Println("objective =", classifier.CalcObjective(missedExamples))
+	}
+
+	classifier.Save()
+
+	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 }
