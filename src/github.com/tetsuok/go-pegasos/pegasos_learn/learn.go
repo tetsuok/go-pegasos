@@ -20,16 +20,6 @@ var numIter = flag.Int("t", int(100.0 / *lambda), "Number of iterations")
 var blockSize = flag.Int("k", 1, "Size of block for SGD")
 var modelFile = flag.String("m", "model", "Model file")
 
-//
-// TODO: consider modifying the user interface such as
-//
-// ./pegasos learn file model
-//
-// ./pegasos test file model
-//
-// where "learn" and "test" represent the actions.
-//
-
 func main() {
 	flag.Parse()
 	if flag.NArg() < 1 {

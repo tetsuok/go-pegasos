@@ -20,6 +20,6 @@ _cgo_export.*
 _testmain.go
 
 *.exe
-pegasos_classify
-pegasos_learn
 model
+./pegasos_learn
+./pegasos_classify
