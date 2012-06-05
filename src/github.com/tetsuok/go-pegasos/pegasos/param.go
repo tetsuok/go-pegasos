@@ -13,10 +13,10 @@ import (
 // Param represents hyperparameters used in Pegasos.
 type Param struct {
 	// hyperparameter used in Pegasos.
-	Lambda    float64
+	Lambda float64
 
 	// The number of iterations
-	NumIter   int
+	NumIter int
 
 	BlockSize int
 
@@ -68,7 +68,7 @@ func decode(b *bytes.Buffer, data interface{}) {
 }
 
 func (p *Param) Equal(other *Param) bool {
-	if !close(p.Lambda, other.Lambda) || p.NumIter != other.NumIter	|| p.BlockSize != other.BlockSize || p.ModelFile != other.ModelFile {
+	if !close(p.Lambda, other.Lambda) || p.NumIter != other.NumIter || p.BlockSize != other.BlockSize || p.ModelFile != other.ModelFile {
 		return false
 	}
 	return true
