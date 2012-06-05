@@ -191,3 +191,20 @@ func Learn(trainFile string, param Param) {
 
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 }
+
+// Classify classifies test examples with trained model.
+func Classify(testFile string, model string) {
+	start := time.Now()
+
+	var classifier Classifier
+	classifier.ReadModel(model)
+	fmt.Printf("Model loaded %s\n", time.Since(start))
+
+	fmt.Println("reading ", testFile)
+
+	fmt.Println(classifier)
+
+	// TODO: Compute accuracy and recall.
+
+	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
+}

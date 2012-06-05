@@ -6,3 +6,4 @@
 set -x
 export GOPATH=$(pwd)
 go build -x -o pegasos_learn .
+go build -x github.com/tetsuok/go-pegasos/pegasos_classify
