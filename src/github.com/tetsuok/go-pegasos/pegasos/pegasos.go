@@ -7,6 +7,8 @@ package pegasos
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"math"
 	"math/rand"
 	"time"
@@ -121,13 +123,18 @@ func (c *Classifier) CalcObjective(missed []MissedExample) float64 {
 }
 
 // Open model
-func (c *Classifier) Open(model string) {
-	c.param, c.w, c.eta = OpenModel(model)
+func (c *Classifier) ReadModel(model string) error {
+	data, err := ioutil.ReadFile(model)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.Decode(data)
+	return err
 }
 
 // Save model to a file
-func (c *Classifier) Save() {
-	WriteModel(c.param, c.w, c.eta)
+func (c *Classifier) WriteModel(model string) error {
+	return ioutil.WriteFile(model, c.Encode(), 0644)
 }
 
 // APIs
@@ -180,7 +187,7 @@ func Learn(trainFile string, param Param) {
 		fmt.Println("objective =", classifier.CalcObjective(missedExamples))
 	}
 
-	classifier.Save()
+	classifier.WriteModel(param.ModelFile)
 
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 }

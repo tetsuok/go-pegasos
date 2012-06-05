@@ -55,32 +55,3 @@ func ReadTrainingData(filename string) ([]Example, int) {
 	defer file.Close()
 	return readLines(file)
 }
-
-// TODO: Implement reading binary model files.
-func OpenModel(model string) (param Param, w Weights, eta float64) {
-	f, err := os.Open(param.ModelFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	param = Param{}
-	w = NewWeights(10)
-	eta = 1.0
-
-	return param, w, eta
-}
-
-// TODO: Implement saving the trained model to a file.
-func WriteModel(param Param, w Weights, eta float64) {
-	f, err := os.Create(param.ModelFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
-
-	fmt.Println("lambda =", param.Lambda)
-	fmt.Println("block size =", param.BlockSize)
-	fmt.Println("w =", w)
-	fmt.Println("eta =", eta)
-}
