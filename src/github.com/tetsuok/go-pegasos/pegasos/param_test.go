@@ -19,7 +19,7 @@ var paramTests = []struct {
 
 func TestEncodeParam(t *testing.T) {
 	for _, test := range paramTests {
-		param := Param{test.lambda, test.iter, test.blockSize, "model"}
+		param := Param{test.lambda, test.iter, test.blockSize, ""}
 		bytes := param.Encode()
 		var param2 Param
 		param2.Decode(bytes)

@@ -5,6 +5,7 @@
 package pegasos
 
 import (
+	"bytes"
 	"fmt"
 	"math"
 	"math/rand"
@@ -56,6 +57,37 @@ type Classifier struct {
 
 func NewClassifier(param Param, examples []Example, dim int) *Classifier {
 	return &Classifier{param, examples, 0.0, NewWeights(dim + 1)}
+}
+
+// Note: we won't encode training examples.
+func (c *Classifier) Encode() []byte {
+	buf := c.param.Buffer()
+	c.writeBytes(buf)
+	return buf.Bytes()
+}
+
+func (c *Classifier) Decode(data []byte) {
+	buf := c.param.Decode(data)
+	decode(buf, &c.eta)
+
+	// decode a weight vector
+	var l uint64
+	decode(buf, &l)
+
+	c.w = make([]float64, l)
+	for i := 0; i < len(c.w); i++ {
+		decode(buf, &c.w[i])
+	}
+}
+
+func (c *Classifier) writeBytes(buf *bytes.Buffer) {
+	encode(buf, c.eta)
+
+	// Encode the weight vector
+	encode(buf, uint64(len(c.w)))
+	for _, v := range c.w {
+		encode(buf, v)
+	}
 }
 
 func (c *Classifier) SetEta(t int) {
