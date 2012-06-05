@@ -50,12 +50,12 @@ func (e Example) Equal(other Example) bool {
 type Classifier struct {
 	param    Param
 	examples []Example
-	w        Weights
 	eta      float64
+	w        Weights
 }
 
 func NewClassifier(param Param, examples []Example, dim int) *Classifier {
-	return &Classifier{param, examples, NewWeights(dim + 1), 0.0}
+	return &Classifier{param, examples, 0.0, NewWeights(dim + 1)}
 }
 
 func (c *Classifier) SetEta(t int) {
