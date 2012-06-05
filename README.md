@@ -17,7 +17,8 @@ Build Instructions
 ### Compilation ###
 
     $ export GOPATH=$(pwd)
-    $ go build -o pegasos_learn .
+    $ go build github.com/tetsuok/go-pegasos/pegasos_learn
+    $ go build github.com/tetsuok/go-pegasos/pegasos_classify
 
 or simply run
 
