@@ -83,8 +83,12 @@ func (fv *FeatureVector) Equal(other *FeatureVector) bool {
 func InnerProduct(w []float64, fv *FeatureVector) float64 {
 	res := 0.0
 	N := fv.Size()
+	l := len(w)
 	for i := 0; i < N; i++ {
 		f := fv.Index(i)
+		if f.id > l {
+			break
+		}
 		res += w[f.id] * f.v
 	}
 	return res
