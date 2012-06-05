@@ -26,6 +26,11 @@ type Param struct {
 
 // Convert the internal parameters into bytes.
 func (p *Param) Encode() []byte {
+	buf := p.Buffer()
+	return buf.Bytes()
+}
+
+func (p *Param) Buffer() *bytes.Buffer {
 	buf := new(bytes.Buffer)
 	encode(buf, p.Lambda)
 
@@ -33,16 +38,11 @@ func (p *Param) Encode() []byte {
 	var k int32 = int32(p.BlockSize)
 	encode(buf, it)
 	encode(buf, k)
-
-	n, err := buf.WriteString(p.ModelFile)
-	if n != len(p.ModelFile) || err != nil {
-		log.Fatal(err)
-	}
-	return buf.Bytes()
+	return buf
 }
 
 // Decode decodes bytes internal parameters again.
-func (p *Param) Decode(data []byte) {
+func (p *Param) Decode(data []byte) *bytes.Buffer {
 	buf := bytes.NewBuffer(data)
 	decode(buf, &p.Lambda)
 
@@ -52,7 +52,7 @@ func (p *Param) Decode(data []byte) {
 	decode(buf, &k)
 	p.NumIter = int(it)
 	p.BlockSize = int(k)
-	p.ModelFile = buf.String()
+	return buf
 }
 
 func encode(b *bytes.Buffer, data interface{}) {

@@ -12,15 +12,14 @@ var paramTests = []struct {
 	lambda    float64
 	iter      int
 	blockSize int
-	model     string
 }{
-	{0.1, 2, 1, "model"},
-	{0.01, 10, 1, "model"},
+	{0.1, 2, 1},
+	{0.01, 10, 1},
 }
 
 func TestEncodeParam(t *testing.T) {
 	for _, test := range paramTests {
-		param := Param{test.lambda, test.iter, test.blockSize, test.model}
+		param := Param{test.lambda, test.iter, test.blockSize, "model"}
 		bytes := param.Encode()
 		var param2 Param
 		param2.Decode(bytes)
