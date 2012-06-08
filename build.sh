@@ -4,7 +4,7 @@
 # license that can be found in the LICENSE file.
 
 set -x
-OPT=-x
+OPT=
 export GOPATH=$(pwd)
 go build $OPT github.com/tetsuok/go-pegasos/pegasos_learn
 go build $OPT github.com/tetsuok/go-pegasos/pegasos_classify
