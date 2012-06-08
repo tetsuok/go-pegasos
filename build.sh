@@ -7,4 +7,4 @@ set -x
 OPT=
 export GOPATH=$(pwd)
 go build $OPT github.com/tetsuok/go-pegasos/pegasos_learn
-go build $OPT github.com/tetsuok/go-pegasos/pegasos_classify
+go build $OPT -o pegasos_test github.com/tetsuok/go-pegasos/pegasos_classify

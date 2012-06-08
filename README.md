@@ -63,7 +63,7 @@ Please note "-m" is required to save the trained model.
 
 ### Testing with trained model ###
 
-    $ ./classify test_file model_file
+    $ ./pegasos_test test_file model_file
 
 ### Reference ####
 

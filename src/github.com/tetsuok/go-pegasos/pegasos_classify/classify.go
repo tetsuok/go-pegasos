@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Usage
-//   $ ./classify test_file model_file
+//   $ ./pegasos_test test_file model_file
 
 package main
 
