@@ -19,7 +19,7 @@ func (w *Weights) Len() int          { return len(*w) }
 
 func (w *Weights) Scale(f float64) {
 	for i := 0; i < len(*w); i++ {
-		(*w)[i] = (*w)[i] * f
+		(*w)[i] *= f
 	}
 }
 
