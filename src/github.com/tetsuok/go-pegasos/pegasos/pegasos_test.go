@@ -26,8 +26,8 @@ var classifierTests = []struct {
 	eta float64
 	w   Weights
 }{
-	{Param{0.1, 2, 1, "model"}, 0.1, []float64{0.1, 0.2}},
-	{Param{0.01, 10, 1, "model"}, 0.01, []float64{0.1, -0.2}},
+	{Param{0.1, 2, 1, 1234, "model"}, 0.1, []float64{0.1, 0.2}},
+	{Param{0.01, 10, 1, 1234, "model"}, 0.01, []float64{0.1, -0.2}},
 }
 
 func setupExample(label int) *Example {
