@@ -48,11 +48,22 @@ potential to handle large sparse feature vectors.
 
 ### Training ###
 
-Under construction.
+    $ ./pegasos_learn -m model_file train_file
+
+Please note "-m" is required to save the trained model.
+
+#### Options #####
+
+* -k INT: number of block size.
+* -lambda FLOAT: Regularization parameter
+* -m STRING: model file
+* -r INT: seed
+* -t INT: number of iterations
+* -test STRING: If you set a test file, you can do training and testing at a time.
 
 ### Testing with trained model ###
 
-Under construction.
+    $ ./classify test_file model_file
 
 ### Reference ####
 
