@@ -119,6 +119,14 @@ func (c *Classifier) Eta() float64 { return c.eta }
 
 // }
 
+func (c *Classifier) Predict(fv *FeatureVector) int {
+	s := InnerProduct(c.w, fv)
+	if s > 0.0 {
+		return 1
+	}
+	return -1
+}
+
 func (c *Classifier) Project() {
 	norm := c.w.L2Norm()
 	l := math.Sqrt(c.param.Lambda)
