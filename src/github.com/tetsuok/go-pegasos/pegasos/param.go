@@ -18,7 +18,11 @@ type Param struct {
 	// The number of iterations
 	NumIter int
 
+	// Pegasos's k (size of A_t)
 	BlockSize int
+
+	// seed to perform random sampling from the training data.
+	Seed int64
 
 	// Model file to be used in loading and saving to a file.
 	ModelFile string
