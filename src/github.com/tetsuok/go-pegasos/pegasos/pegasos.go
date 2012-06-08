@@ -35,11 +35,6 @@ type Example struct {
 	label int
 }
 
-type MissedExample struct {
-	id int     // an index of missed example.
-	w  float64 // score to calculate eta_k /k \sum y x
-}
-
 func (e Example) Equal(other Example) bool {
 	if e.label != other.label {
 		return false
@@ -48,6 +43,28 @@ func (e Example) Equal(other Example) bool {
 		return false
 	}
 	return true
+}
+
+type MissedExample struct {
+	id int     // an index of missed example.
+	w  float64 // score to calculate eta_k /k \sum y x
+}
+
+type MissedExamples struct {
+	examples []MissedExample
+	lastId   int // point to last id of slices "examples"
+}
+
+func NewMissedExamples(size int) *MissedExamples {
+	return &MissedExamples{make([]MissedExample, size), 0}
+}
+
+func (m *MissedExamples) SetId(id int) {
+	m.examples[m.lastId].id = id
+}
+
+func (m *MissedExamples) SetValue(v float64) {
+	m.examples[m.lastId].w = v
 }
 
 type Classifier struct {
