@@ -33,7 +33,7 @@ func readLines(r io.Reader) ([]Example, int) {
 
 		x, id, err := Tokenize(strings.TrimRight(line, "\n"))
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Illegal line at %d\n", lineNum)
+			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
 			continue
 		}
 		data = append(data, x)
