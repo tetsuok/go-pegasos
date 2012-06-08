@@ -5,12 +5,16 @@
 package pegasos
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"math"
 	"math/rand"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -136,15 +140,20 @@ func (c *Classifier) Project() {
 	}
 }
 
-func (c *Classifier) CalcObjective(missed []MissedExample) float64 {
+func (c *Classifier) CalcObjective(examples []Example) float64 {
 	norm := c.w.SquareNorm() * 0.5 * c.param.Lambda
 
-	loss := 0.0
-	for _, e := range missed {
-		loss += HingeLoss(c.w, c.examples[e.id].fv, c.examples[e.id].label)
+	totalLoss := 0.0
+	for _, e := range examples {
+		totalLoss += HingeLoss(c.w, e.fv, e.label)
 	}
-	loss /= float64(c.param.BlockSize)
-	return norm + loss
+	totalLoss /= float64(len(examples))
+	return norm + totalLoss
+}
+
+func (c *Classifier) Objective(totalLoss float64) float64 {
+	norm := c.w.SquareNorm() * 0.5 * c.param.Lambda
+	return norm + totalLoss
 }
 
 // Open model
@@ -165,7 +174,7 @@ func (c *Classifier) WriteModel(model string) error {
 // APIs
 
 func Learn(trainFile string, param Param) {
-	rand.Seed(1234)
+	rand.Seed(param.Seed)
 	start := time.Now()
 
 	fmt.Printf("Reading %s ... ", trainFile)
@@ -174,45 +183,11 @@ func Learn(trainFile string, param Param) {
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 
 	classifier := NewClassifier(param, examples, dim)
+	trainClassifier(examples, classifier)
 
-	numExamples := len(examples)
-	fmt.Println("Dimension =", classifier.w.Len())
-	fmt.Println("# of training data =", numExamples)
-
-	for t := 0; t < param.NumIter; t++ {
-		fmt.Println("Iteration =", t)
-		// eta := 1.0 / (param.Lambda * float64(t + 2))
-		classifier.SetEta(t)
-
-		// TODO: use make and resize properly.
-		var missedExamples []MissedExample
-
-		// Set up A_t
-		for k := 0; k < param.BlockSize; k++ {
-			r := SelectNext(numExamples)
-
-			// Compute A_t^+
-			loss := HingeLoss(classifier.w, examples[r].fv, examples[r].label)
-			if loss > 0.0 {
-				// TODO: This is too slow; replace Append() described in "Effective Go".
-				missedExamples = append(missedExamples,
-					MissedExample{r, classifier.eta * float64(examples[r].label) / float64(param.BlockSize)})
-			}
-		}
-
-		// Subgradient
-		classifier.w.Scale(1.0 - classifier.eta*param.Lambda)
-		for _, missed := range missedExamples {
-			classifier.w.Add(examples[missed.id].fv, missed.w)
-		}
-
-		classifier.Project()
-
-		// Compute objective
-		fmt.Println("objective =", classifier.CalcObjective(missedExamples))
+	if len(param.ModelFile) > 0 {
+		classifier.WriteModel(param.ModelFile)
 	}
-
-	classifier.WriteModel(param.ModelFile)
 
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 }
@@ -225,11 +200,109 @@ func Classify(testFile string, model string) {
 	classifier.ReadModel(model)
 	fmt.Printf("Model loaded %s\n", time.Since(start))
 
-	fmt.Println("reading ", testFile)
-
-	fmt.Println(classifier)
+	classifyTestData(testFile, &classifier)
 
 	// TODO: Compute accuracy and recall.
 
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
+}
+
+func LearnAndClassify(trainFile, testFile string, param Param) {
+	rand.Seed(param.Seed)
+	start := time.Now()
+
+	fmt.Printf("Reading %s ... ", trainFile)
+	examples, dim := ReadTrainingData(trainFile)
+	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
+
+	classifier := NewClassifier(param, examples, dim)
+	trainClassifier(examples, classifier)
+
+	classifyTestData(testFile, classifier)
+
+	if len(param.ModelFile) > 0 {
+		classifier.WriteModel(param.ModelFile)
+	}
+
+	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
+}
+
+func trainClassifier(examples []Example, classifier *Classifier) {
+	numExamples := len(examples)
+	fmt.Println("Number of features =", classifier.w.Len())
+	fmt.Println("Number of training examples =", numExamples)
+
+	for t := 0; t < classifier.param.NumIter; t++ {
+		classifier.SetEta(t)
+
+		missedExamples := NewMissedExamples(classifier.param.BlockSize)
+
+		// Set up A_t
+		for k := 0; k < classifier.param.BlockSize; k++ {
+			r := SelectNext(numExamples)
+
+			// Compute A_t^+
+			loss := HingeLoss(classifier.w, examples[r].fv, examples[r].label)
+			if loss > 0.0 {
+				v := classifier.eta * float64(examples[r].label) / float64(classifier.param.BlockSize)
+				missedExamples.SetId(r)
+				missedExamples.SetValue(v)
+				missedExamples.lastId++
+			}
+		}
+
+		// Subgradient
+		classifier.w.Scale(1.0 - classifier.eta*classifier.param.Lambda)
+
+		// Compute w_{t+1/2} = (1 - eta_t * lambda) w_t + (eta_t / k) \sum_{x, y} \in A_t y x
+		for i := 0; i < missedExamples.lastId; i++ {
+			missed := missedExamples.examples[i]
+			classifier.w.Add(examples[missed.id].fv, missed.w)
+		}
+
+		classifier.Project()
+
+		// This should be used only for experiments since this gets slow.
+		// Compute objective
+		// fmt.Fprintf(os.Stderr, "objective = %g\n", classifier.CalcObjective(examples))
+	}
+}
+
+func classifyTestData(testFile string, classifier *Classifier) {
+	reader, err := os.Open(testFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer reader.Close()
+
+	rd := bufio.NewReader(reader)
+	lineNum := 1
+	eval := Eval{}
+	totalLoss := 0.0
+
+	for {
+		line, err := rd.ReadString('\n')
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		x, _, err := Tokenize(strings.TrimRight(line, "\n"))
+
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
+			continue
+		}
+
+		y := classifier.Predict(x.fv)
+		eval.Evaluate(x.label, y)
+		totalLoss += HingeLoss(classifier.w, x.fv, x.label)
+		lineNum++
+	}
+	totalLoss /= float64(lineNum)
+
+	fmt.Println(eval.String())
+	fmt.Fprintf(os.Stderr, "objective = %g\n", classifier.Objective(totalLoss))
 }
