@@ -79,6 +79,17 @@ func TestFeatureInnerProduct(t *testing.T) {
 	}
 }
 
+func TestInnerProductBoundaryCheck(t *testing.T) {
+	fv := NewFeatureVector(2)
+	fv.PushBack(Node{0, 1.0})
+	fv.PushBack(Node{1, 4.0})
+	fv.PushBack(Node{2, 4.0})
+	w := []float64{2.0, 4.0}
+	if v := InnerProduct(w, fv); !close(v, 18.0) {
+		t.Errorf("InnerProduct(w, fv) = %g, want %g", v, 18.0)
+	}
+}
+
 func makeSparseFeatureVector(size int) *FeatureVector {
 	fv := NewFeatureVector(size)
 

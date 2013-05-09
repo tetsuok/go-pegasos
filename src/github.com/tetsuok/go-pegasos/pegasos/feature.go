@@ -34,7 +34,7 @@ func (fv *FeatureVector) Index(i int) *Node {
 	if i < 0 {
 		panic("invalid id")
 	}
-	if i > fv.Len() {
+	if i >= fv.Len() {
 		panic("index exceeds the size of feature vector")
 	}
 	return &fv.vec[i]
@@ -86,7 +86,7 @@ func InnerProduct(w []float64, fv *FeatureVector) float64 {
 	l := len(w)
 	for i := 0; i < N; i++ {
 		f := fv.Index(i)
-		if f.id > l {
+		if f.id >= l {
 			break
 		}
 		res += w[f.id] * f.v
