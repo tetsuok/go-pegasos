@@ -18,19 +18,12 @@ import (
 // implements file reader to read files in libsvm format.
 
 func readLines(r io.Reader) ([]Example, int) {
-	rd := bufio.NewReader(r)
+	scanner := bufio.NewScanner(r)
 	lineNum := 1
 	var data []Example
 	maxId := 0
-	for {
-		line, err := rd.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
-
+	for scanner.Scan() {
+		line := scanner.Text()
 		x, id, err := Tokenize(strings.TrimRight(line, "\n"))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
@@ -43,6 +36,9 @@ func readLines(r io.Reader) ([]Example, int) {
 		}
 
 		lineNum++
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
 	}
 	return data, maxId
 }
