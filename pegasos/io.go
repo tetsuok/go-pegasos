@@ -10,7 +10,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
 )
 
 // reaeder
@@ -20,11 +19,11 @@ import (
 func readLines(r io.Reader) ([]Example, int) {
 	scanner := bufio.NewScanner(r)
 	lineNum := 1
-	var data []Example
+	data := make([]Example, 0, 1000)
 	maxId := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		x, id, err := Tokenize(strings.TrimRight(line, "\n"))
+		x, id, err := Tokenize(line)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
 			continue
