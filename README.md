@@ -17,7 +17,7 @@ Build Instructions
 ### Installation of commands ###
 
     $ go install github.com/tetsuok/go-pegasos/pegasos_learn
-    $ go install github.com/tetsuok/go-pegasos/pegasos_classify
+    $ go install github.com/tetsuok/go-pegasos/pegasos_test
 
 ### Testing ###
 
