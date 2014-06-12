@@ -12,20 +12,12 @@ Build Instructions
 
 ### Get the code ###
 
-    $ git clone git://github.com/tetsuok/go-pegasos.git
+    $ go get github.com/tetsuok/go-pegasos
 
-### Compilation ###
+### Installation of commands ###
 
-    $ export GOPATH=$(pwd)
-    $ go build github.com/tetsuok/go-pegasos/pegasos_learn
-    $ go build github.com/tetsuok/go-pegasos/pegasos_classify
-
-or simply run
-
-    $ ./build.sh
-
-`build.sh` is a wrapper of these commands.
-
+    $ go install github.com/tetsuok/go-pegasos/pegasos_learn
+    $ go install github.com/tetsuok/go-pegasos/pegasos_classify
 
 ### Testing ###
 
