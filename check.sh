@@ -4,7 +4,6 @@
 # license that can be found in the LICENSE file.
 
 set -x
-export GOPATH=$(pwd)
 
 # Just testing.
 # go test -test.v -test.parallel 4 github.com/tetsuok/go-pegasos/pegasos

@@ -21,7 +21,6 @@ Build Instructions
 
 ### Testing ###
 
-    $ export GOPATH=$(pwd)
     $ go test github.com/tetsuok/go-pegasos/pegasos
 
 If you want to run testing including benchmarks, use `check.sh`
