@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"strings"
 )
 
 var ErrSyntax = errors.New("invalid syntax")
@@ -60,29 +59,69 @@ Error:
 	return nil, syntaxError(fnTokenizeNode, s)
 }
 
-func Tokenize(s string) (x Example, maxId int, err error) {
-	fv := NewFeatureVector(3)
-	seq := strings.Split(s, " ")
-	y, err := strconv.Atoi(seq[0])
-	maxId = 0
-
-	if err != nil || (y != -1 && y != 1) {
-		fmt.Fprintf(os.Stderr, "Invalid label = %d\n", y)
-		return Example{}, maxId, err
+func Tokenize(line string, lineNum int) (x Example, maxId int) {
+	ptr := 0
+	begin := ptr
+	for {
+		if line[ptr] == ' ' {
+			break
+		}
+		ptr++
+	}
+	y, err := strconv.Atoi(line[begin:ptr])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "# y: Illegal line at %d\n", lineNum)
+		return Example{}, 0
 	}
 
-	for _, a := range seq[1:] {
-		node, err := tokenizeNode(a)
+	ptr++
+
+	fv := NewFeatureVector(50)
+	l := len(line)
+	for {
+		if ptr >= l {
+			break
+		}
+		begin = ptr
+		if line[ptr] == '\n' {
+			break
+		}
+		for {
+			if line[ptr] == ':' {
+				break
+			}
+			ptr++
+		}
+		id, err := strconv.Atoi(line[begin:ptr])
 		if err != nil {
-			return Example{}, maxId, err
+			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
+			return Example{}, 0
 		}
-		fv.PushBack(*node)
+		ptr++
+		begin = ptr
+		for {
+			if ptr == l {
+				break
+			}
+			if line[ptr] == ' ' {
+				break
+			}
+			ptr++
+		}
+		val, err := strconv.ParseFloat(line[begin:ptr], 64)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
+			return Example{}, 0
+		}
+		fv.PushBack(Node{id, val})
+		ptr++
 
-		if node.id > maxId {
-			maxId = node.id
+		if id > maxId {
+			maxId = id
 		}
 	}
-	return Example{fv, y}, maxId, nil
+
+	return Example{fv, y}, maxId
 }
 
 // func DebugStringList(l *list.List) string {

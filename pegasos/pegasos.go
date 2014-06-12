@@ -8,13 +8,11 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"math"
 	"math/rand"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -275,21 +273,15 @@ func classifyTestData(testFile string, classifier *Classifier) {
 	}
 	defer reader.Close()
 
-	rd := bufio.NewReader(reader)
+	scanner := bufio.NewScanner(reader)
 	lineNum := 1
 	eval := Eval{}
 	totalLoss := 0.0
 
-	for {
-		line, err := rd.ReadString('\n')
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatal(err)
-		}
+	for scanner.Scan() {
+		line := scanner.Text()
 
-		x, _, err := Tokenize(strings.TrimRight(line, "\n"))
+		x, _ := Tokenize(line, lineNum)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
@@ -300,6 +292,9 @@ func classifyTestData(testFile string, classifier *Classifier) {
 		eval.Evaluate(x.label, y)
 		totalLoss += HingeLoss(classifier.w, x.fv, x.label)
 		lineNum++
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
 	}
 	totalLoss /= float64(lineNum)
 

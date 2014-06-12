@@ -6,7 +6,6 @@ package pegasos
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"log"
 	"os"
@@ -23,17 +22,12 @@ func readLines(r io.Reader) ([]Example, int) {
 	maxId := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		x, id, err := Tokenize(line)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)
-			continue
-		}
+		x, id := Tokenize(line, lineNum)
 		data = append(data, x)
 
 		if id > maxId {
 			maxId = id
 		}
-
 		lineNum++
 	}
 	if err := scanner.Err(); err != nil {
