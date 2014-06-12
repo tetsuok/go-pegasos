@@ -11,10 +11,6 @@ import (
 	"os"
 )
 
-// reaeder
-//
-// implements file reader to read files in libsvm format.
-
 func readLines(r io.Reader) ([]Example, int) {
 	scanner := bufio.NewScanner(r)
 	lineNum := 1

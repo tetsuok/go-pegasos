@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// An example of tokenize strings
-
 package pegasos
 
 import (
@@ -12,6 +10,7 @@ import (
 	"strconv"
 )
 
+// Tokenize parses a string in the libsvm format.
 func Tokenize(line string, lineNum int) (x Example, maxId int) {
 	ptr := 0
 	begin := ptr
@@ -76,16 +75,3 @@ func Tokenize(line string, lineNum int) (x Example, maxId int) {
 
 	return Example{fv, y}, maxId
 }
-
-// func DebugStringList(l *list.List) string {
-// 	str := "["
-// 	for e := l.Front(); e != nil; e = e.Next() {
-// 		if e != l.Front() {
-// 			str += " "
-// 		}
-// 		if e.Value != nil {
-// 			str += fmt.Sprint(e.Value)
-// 		}
-// 	}
-// 	return str + "]"
-// }

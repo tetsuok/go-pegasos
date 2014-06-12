@@ -4,8 +4,6 @@
 
 package pegasos
 
-// an simple implementation of feature vector in go
-
 type Node struct {
 	id int
 	v  float64
@@ -40,7 +38,6 @@ func (fv *FeatureVector) Index(i int) *Node {
 	return &fv.vec[i]
 }
 
-// Alloc
 func NewFeatureVector(size int) *FeatureVector {
 	v := make([]Node, size)
 	fv := FeatureVector{vec: v}
@@ -73,11 +70,6 @@ func (fv *FeatureVector) Equal(other *FeatureVector) bool {
 	}
 	return true
 }
-
-// Append
-// func (fv *FeatureVector) Append(slice []Feature) {
-// TODO: implement append slice of Feature to fv.vec.
-// }
 
 // TODO: this is too slow. profiling is needed.
 func InnerProduct(w []float64, fv *FeatureVector) float64 {

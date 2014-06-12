@@ -81,6 +81,7 @@ func NewClassifier(param Param, examples []Example, dim int) *Classifier {
 }
 
 // Note: we won't encode training examples.
+
 func (c *Classifier) Encode() []byte {
 	buf := c.param.Buffer()
 	c.writeBytes(buf)
@@ -116,10 +117,6 @@ func (c *Classifier) SetEta(t int) {
 }
 
 func (c *Classifier) Eta() float64 { return c.eta }
-
-// func (c *Classifier)CalcMissedExamples() {
-
-// }
 
 func (c *Classifier) Predict(fv *FeatureVector) int {
 	s := InnerProduct(c.w, fv)
@@ -190,7 +187,7 @@ func Learn(trainFile string, param Param) {
 	fmt.Printf("Done!. Elapsed time %s\n", time.Since(start))
 }
 
-// Classify classifies test examples with trained model.
+// Classify classifies test examples with the specified |model|.
 func Classify(testFile string, model string) {
 	start := time.Now()
 
