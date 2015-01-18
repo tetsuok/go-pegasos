@@ -18,7 +18,7 @@ func readLines(r io.Reader) ([]Example, int) {
 	maxId := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		x, id := Tokenize(line, lineNum)
+		x, id := tokenize(line, lineNum)
 		data = append(data, x)
 
 		if id > maxId {

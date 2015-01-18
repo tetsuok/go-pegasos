@@ -278,7 +278,7 @@ func classifyTestData(testFile string, classifier *Classifier) {
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		x, _ := Tokenize(line, lineNum)
+		x, _ := tokenize(line, lineNum)
 
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "# Illegal line at %d\n", lineNum)

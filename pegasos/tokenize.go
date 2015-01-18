@@ -11,7 +11,7 @@ import (
 )
 
 // Tokenize parses a string in the libsvm format.
-func Tokenize(line string, lineNum int) (x Example, maxId int) {
+func tokenize(line string, lineNum int) (x Example, maxId int) {
 	ptr := 0
 	begin := ptr
 	for {
